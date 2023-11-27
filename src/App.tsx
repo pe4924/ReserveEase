@@ -84,9 +84,9 @@ const LoginForm = () => {
     <div className="container">
       <nav>
         <div>
-          <p className="title">Attendly デモVer</p>
+          <p className="title">ReserveEase デモVer</p>
         </div>
-        <p className="sub-title">勤怠管理アプリ</p>
+        <p className="sub-title">予約確認アプリ</p>
       </nav>
       <div className="main-form">
         {message && (

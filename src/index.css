@@ -88,6 +88,37 @@ nav {
   box-shadow: inset 12px 12px 20px #b3b3b3, inset -12px -12px 20px #ffffff;
 }
 
+.calendar-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.calendar-table {
+  min-width: 600px;
+  border-collapse: collapse;
+}
+
+.calendar-table th,
+.calendar-table td {
+  border: 1px solid black;
+  text-align: center;
+  padding: 5px;
+}
+
+.calendar-table th.hour {
+  width: 100px; /* または必要に応じて調整 */
+}
+
+.calendar-table td.quarter-hour,
+.calendar-table .quarter-hour {
+  border-top: 1px solid lightgray;
+}
+
+.scheduled-time {
+  border-radius: 1px;
+  border-bottom: 10px solid rgb(62, 166, 121);
+}
+
 @media (min-width: 768px) {
   .container {
     max-width: 700px;
