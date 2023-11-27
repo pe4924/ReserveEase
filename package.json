@@ -13,8 +13,10 @@
     "@supabase/auth-ui-react": "^0.4.6",
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/supabase-js": "^2.38.5",
+    "date-fns": "^2.30.0",
     "dotenv": "^16.3.1",
     "react": "^18.2.0",
+    "react-day-picker": "^8.9.1",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.0",
     "react-virtual-gantt": "^0.1.2"
