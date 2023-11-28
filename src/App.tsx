@@ -7,15 +7,24 @@ import {
 } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import Home from "./Home";
+import { ChakraProvider } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+} from "@chakra-ui/react";
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LoginForm />} />
-        <Route path="/home" element={<Home />} />
-      </Routes>
-    </Router>
+    <ChakraProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LoginForm />} />
+          <Route path="/home" element={<Home />} />
+        </Routes>
+      </Router>
+    </ChakraProvider>
   );
 };
 
@@ -89,8 +98,12 @@ const LoginForm = () => {
         <p className="sub-title">予約確認アプリ</p>
       </nav>
       <div className="main-form">
-        {message && (
-          <div className={isError ? "error-message" : "message"}>{message}</div>
+        {message && isError && (
+          <Alert status="error">
+            <AlertIcon />
+            <AlertTitle>ログインエラー</AlertTitle>
+            <AlertDescription>{message}</AlertDescription>
+          </Alert>
         )}
         <form>
           <label htmlFor="email">メールアドレス</label>
