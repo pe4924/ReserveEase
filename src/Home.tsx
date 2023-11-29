@@ -1,9 +1,9 @@
-import CalendarComponent from "./components/CalendarComponent";
+import Calendar from "./components/Calendar";
 
 const Home = () => {
   return (
-    <div>
-      <CalendarComponent />
+    <div className="home">
+      <Calendar />
     </div>
   );
 };
