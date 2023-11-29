@@ -1,3 +1,4 @@
+import SignUp from "./SignUp";
 import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
@@ -32,6 +33,7 @@ const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
   const handleShowClick = () => setShowPassword(!showPassword);
 
@@ -64,115 +66,132 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <Flex
-      flexDirection="column"
-      width="100wh"
-      height="100vh"
-      backgroundColor="gray.100"
-      justifyContent="center"
-      alignItems="center"
-    >
-      {loading && (
-        <Flex
-          position="fixed"
-          top={0}
-          left={0}
-          right={0}
-          bottom={0}
-          justifyContent="center"
-          alignItems="center"
-          backgroundColor="rgba(0, 0, 0, 0.4)"
-        >
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
-        </Flex>
-      )}
-      <form style={formStyle} onSubmit={handleLogin}>
-        <Stack
-          flexDir="column"
-          mb="2"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Heading color="teal.400">ReserveEase</Heading>
-          <Box minW={{ base: "90%", md: "468px" }}>
-            <Stack
-              spacing={4}
-              p="1rem"
-              backgroundColor="whiteAlpha.900"
-              boxShadow="md"
+    <>
+      <Flex
+        flexDirection="column"
+        width="100wh"
+        height="100vh"
+        backgroundColor="gray.100"
+        justifyContent="center"
+        alignItems="center"
+      >
+        {loading && (
+          <Flex
+            position="fixed"
+            top={0}
+            left={0}
+            right={0}
+            bottom={0}
+            justifyContent="center"
+            alignItems="center"
+            backgroundColor="rgba(0, 0, 0, 0.4)"
+          >
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+              size="xl"
+            />
+          </Flex>
+        )}
+        <form style={formStyle} onSubmit={handleLogin}>
+          <Stack
+            flexDir="column"
+            mb="2"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Heading
+              style={{
+                background: "linear-gradient(45deg, purple, blue)",
+                padding: "20px",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                color: "transparent",
+              }}
+              color="teal.400"
             >
-              <FormControl>
-                {loginError && (
-                  <Alert status="error" marginBottom={5} borderRadius={5}>
-                    <AlertIcon />
-                    <AlertTitle>ログインエラー</AlertTitle>
-                    <AlertDescription>
-                      メールアドレスまたはパスワードが違います
-                    </AlertDescription>
-                  </Alert>
-                )}
-                <InputGroup>
-                  <InputLeftElement
-                    pointerEvents="none"
-                    children={<CMdMail color="gray.300" />}
-                  />
-                  <Input
-                    type="email"
-                    placeholder="メールアドレス"
-                    name="email"
-                  />
-                </InputGroup>
-              </FormControl>
-              <FormControl>
-                <InputGroup>
-                  <InputLeftElement
-                    pointerEvents="none"
-                    color="gray.300"
-                    children={<CFaLock color="gray.300" />}
-                  />
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="パスワード"
-                    name="password"
-                  />
-                  <InputRightElement width="4.5rem">
-                    <Button
-                      h="1.75rem"
-                      size="sm"
-                      onClick={handleShowClick}
-                      backgroundColor="#f0f0f0"
-                    >
-                      {showPassword ? <CFaRegEyeSlash /> : <CFaRegEye />}
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-              </FormControl>
-              <Button
-                borderRadius={5}
-                type="submit"
-                variant="solid"
-                colorScheme="teal"
-                width="full"
+              ReserveEase
+            </Heading>
+            <Box minW={{ base: "90%", md: "468px" }}>
+              <Stack
+                spacing={4}
+                p="1rem"
+                backgroundColor="whiteAlpha.900"
+                boxShadow="md"
               >
-                ログイン
-              </Button>
-            </Stack>
+                <FormControl>
+                  {loginError && (
+                    <Alert status="error" marginBottom={5} borderRadius={5}>
+                      <AlertIcon />
+                      <AlertTitle>ログインエラー</AlertTitle>
+                      <AlertDescription>
+                        メールアドレスまたはパスワードが違います
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  <InputGroup>
+                    <InputLeftElement
+                      pointerEvents="none"
+                      children={<CMdMail color="gray.300" />}
+                    />
+                    <Input
+                      type="email"
+                      placeholder="メールアドレス"
+                      name="email"
+                    />
+                  </InputGroup>
+                </FormControl>
+                <FormControl>
+                  <InputGroup>
+                    <InputLeftElement
+                      pointerEvents="none"
+                      color="gray.300"
+                      children={<CFaLock color="gray.300" />}
+                    />
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="パスワード"
+                      name="password"
+                    />
+                    <InputRightElement width="4.5rem">
+                      <Button
+                        h="1.75rem"
+                        size="sm"
+                        onClick={handleShowClick}
+                        backgroundColor="#f0f0f0"
+                      >
+                        {showPassword ? <CFaRegEyeSlash /> : <CFaRegEye />}
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
+                </FormControl>
+                <Button
+                  borderRadius={5}
+                  type="submit"
+                  width="full"
+                  style={{
+                    background: "linear-gradient(45deg, blue, purple)",
+                    color: "white",
+                  }}
+                >
+                  ログイン
+                </Button>
+              </Stack>
+            </Box>
+          </Stack>
+          <Box textAlign="right" onClick={() => setIsSignUp(true)}>
+            アカウント登録はこちら→{" "}
+            <Link color="teal.500" href="#">
+              登録
+            </Link>
           </Box>
-        </Stack>
-        <Box>
-          アカウント登録はこちら→{" "}
-          <Link color="teal.500" href="#">
-            登録
-          </Link>
-        </Box>
-      </form>
-    </Flex>
+        </form>
+      </Flex>
+      <SignUp isOpen={isSignUp} onClose={() => setIsSignUp(false)} />
+    </>
   );
 };
 
