@@ -1,1 +1,7 @@
+.fc-event {
+  cursor: pointer;
+}
 
+.fc-event:hover {
+  filter: brightness(1.2);
+}

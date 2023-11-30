@@ -1,10 +1,13 @@
 import { useState, FC } from "react";
+import LogoutButton from "./LogOut";
 import FullCalendar from "@fullcalendar/react";
 import { EventClickArg } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
 import jaLocale from "@fullcalendar/core/locales/ja";
 import {
+  Flex,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -198,70 +201,81 @@ const Calendar: FC = () => {
   };
 
   return (
-    <div className="calendar">
-      <div className="calendar-main">
-        <FullCalendar
-          locale={jaLocale}
-          plugins={[dayGridPlugin, timeGridPlugin]}
-          headerToolbar={{
-            left: "prev,next,today",
-            center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
-          }}
-          initialView="timeGridWeek"
-          events={events}
-          allDaySlot={false}
-          slotLabelFormat={{
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          }}
-          slotDuration={"00:15:00"}
-          slotLabelInterval={"01:00:00"}
-          slotMinTime="08:00:00"
-          slotMaxTime="24:00:00"
-          contentHeight="auto"
-          stickyHeaderDates={true}
-          eventClick={handleEventClick}
-        />
-      </div>
-      {isModalOpen && (
-        <Center>
-          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>予約詳細</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                <p>タイトル: {selectedEvent?.title}</p>
-                {selectedEvent?.start && (
+    <>
+      <Flex justifyContent="flex-end">
+        <LogoutButton />
+      </Flex>
+      <div className="calendar">
+        <div className="calendar-main">
+          <FullCalendar
+            locale={jaLocale}
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            headerToolbar={{
+              left: "prev,next,today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay",
+            }}
+            initialView="dayGridMonth"
+            nowIndicator={true}
+            events={events}
+            allDaySlot={false}
+            slotLabelFormat={{
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            }}
+            slotDuration={"00:15:00"}
+            slotLabelInterval={"01:00:00"}
+            slotMinTime="08:00:00"
+            slotMaxTime="24:00:00"
+            contentHeight="auto"
+            stickyHeaderDates={true}
+            eventClick={handleEventClick}
+          />
+        </div>
+        {isModalOpen && (
+          <Center>
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>予約詳細</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <p>タイトル: {selectedEvent?.title}</p>
+                  {selectedEvent?.start && (
+                    <p>
+                      開始時間: {formatToJapaneseDateTime(selectedEvent.start)}
+                    </p>
+                  )}
+                  {selectedEvent?.end && (
+                    <p>
+                      終了時間: {formatToJapaneseDateTime(selectedEvent.end)}
+                    </p>
+                  )}
                   <p>
-                    開始時間: {formatToJapaneseDateTime(selectedEvent.start)}
+                    氏名: {selectedEvent?.description}
+                    <br />
+                    利用時間:{" "}
+                    {calculateDuration(
+                      selectedEvent?.start,
+                      selectedEvent?.end
+                    )}
                   </p>
-                )}
-                {selectedEvent?.end && (
-                  <p>終了時間: {formatToJapaneseDateTime(selectedEvent.end)}</p>
-                )}
-                <p>
-                  氏名: {selectedEvent?.description}
-                  <br />
-                  利用時間:{" "}
-                  {calculateDuration(selectedEvent?.start, selectedEvent?.end)}
-                </p>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  colorScheme="blue"
-                  onClick={() => setIsModalOpen(false)}
-                >
-                  閉じる
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
-        </Center>
-      )}
-    </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    colorScheme="blue"
+                    onClick={() => setIsModalOpen(false)}
+                  >
+                    閉じる
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          </Center>
+        )}
+      </div>
+    </>
   );
 };
 
