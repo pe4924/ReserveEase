@@ -5,3 +5,15 @@
 .fc-event:hover {
   filter: brightness(1.2);
 }
+
+.fc .fc-toolbar-title {
+  font-weight: bold;
+}
+
+.fc-day-sat {
+  color: blue;
+}
+
+.fc-day-sun {
+  color: red;
+}
