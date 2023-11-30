@@ -264,7 +264,10 @@ const Calendar: FC = () => {
                 </ModalBody>
                 <ModalFooter>
                   <Button
-                    colorScheme="blue"
+                    style={{
+                      background: "linear-gradient(45deg, blue, purple)",
+                      color: "white",
+                    }}
                     onClick={() => setIsModalOpen(false)}
                   >
                     閉じる
