@@ -2,7 +2,7 @@ import { Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
-const LogoutButton: React.FC = () => {
+const Logout: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -28,4 +28,4 @@ const LogoutButton: React.FC = () => {
   );
 };
 
-export default LogoutButton;
+export default Logout;

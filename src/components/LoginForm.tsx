@@ -50,12 +50,12 @@ const LoginForm: React.FC = () => {
     const email = target.email.value;
     const password = target.password.value;
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (!error) {
+    if (!error && data) {
       setTimeout(() => {
         navigate("/home");
       }, 2000);

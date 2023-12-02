@@ -1,5 +1,6 @@
-import { useState, FC } from "react";
+import { useState, useEffect, FC } from "react";
 import LogoutButton from "./LogOut";
+import Reservation from "./Reservation";
 import FullCalendar from "@fullcalendar/react";
 import { EventClickArg } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -26,136 +27,24 @@ type EventDetails = {
   description: string | null;
 };
 
-const events = [
-  {
-    title: "平田A",
-    start: "2023-11-01T10:00",
-    end: "2023-11-01T11:45",
-    extendedProps: {
-      description: "平田俊一",
-    },
-  },
-  {
-    title: "平田C",
-    start: "2023-11-01T12:00",
-    end: "2023-11-01T14:00",
-    extendedProps: {
-      description: "平田俊二",
-    },
-  },
-  {
-    title: "平田D",
-    start: "2023-11-01T17:00",
-    end: "2023-11-01T21:15",
-    extendedProps: {
-      description: "平田俊三",
-    },
-  },
-  {
-    title: "平田A",
-    start: "2023-11-08T10:00",
-    end: "2023-11-08T11:45",
-    extendedProps: {
-      description: "平田俊一",
-    },
-  },
-  {
-    title: "平田C",
-    start: "2023-11-08T12:00",
-    end: "2023-11-08T14:00",
-    extendedProps: {
-      description: "平田俊二",
-    },
-  },
-  {
-    title: "平田D",
-    start: "2023-11-08T17:00",
-    end: "2023-11-08T21:15",
-    extendedProps: {
-      description: "平田俊三",
-    },
-  },
-  {
-    title: "平田A",
-    start: "2023-11-15T10:00",
-    end: "2023-11-15T11:45",
-    extendedProps: {
-      description: "平田俊一",
-    },
-  },
-  {
-    title: "平田C",
-    start: "2023-11-15T12:00",
-    end: "2023-11-15T14:00",
-    extendedProps: {
-      description: "平田俊二",
-    },
-  },
-  {
-    title: "平田D",
-    start: "2023-11-15T17:00",
-    end: "2023-11-15T21:15",
-    extendedProps: {
-      description: "平田俊三",
-    },
-  },
-  {
-    title: "平田A",
-    start: "2023-11-22T10:00",
-    end: "2023-11-22T11:45",
-    extendedProps: {
-      description: "平田俊一",
-    },
-  },
-  {
-    title: "平田C",
-    start: "2023-11-22T12:00",
-    end: "2023-11-22T14:00",
-    extendedProps: {
-      description: "平田俊二",
-    },
-  },
-  {
-    title: "平田D",
-    start: "2023-11-22T17:00",
-    end: "2023-11-22T21:15",
-    extendedProps: {
-      description: "平田俊三",
-    },
-  },
-  {
-    title: "平田A",
-    start: "2023-11-29T10:00",
-    end: "2023-11-29T11:45",
-    extendedProps: {
-      description: "平田俊一",
-    },
-  },
-  {
-    title: "平田C",
-    start: "2023-11-29T12:00",
-    end: "2023-11-29T14:00",
-    extendedProps: {
-      description: "平田俊二",
-    },
-  },
-  {
-    title: "平田D",
-    start: "2023-11-29T13:00",
-    end: "2023-11-29T18:15",
-    extendedProps: {
-      description: "平田俊三",
-    },
-  },
-  {
-    title: "平田B",
-    start: "2023-11-30T15:00:00",
-    end: "2023-11-30T17:30:00",
-    extendedProps: {
-      description: "平田ははは",
-    },
-  },
-];
+type CalendarEvent = {
+  title: string;
+  start: string;
+  end: string;
+  extendedProps: {
+    description: string;
+  };
+};
+
+type EventApiResponse = {
+  id: number;
+  title: string;
+  start_date: string;
+  end_date: string;
+  description: string;
+  user_id: string;
+  last_name: string;
+};
 
 const formatToJapaneseDateTime = (date: Date | null): string => {
   if (!date) return "";
@@ -188,8 +77,34 @@ function calculateDuration(
 }
 
 const Calendar: FC = () => {
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<EventDetails | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/");
+        const data: EventApiResponse[] = await response.json();
+        const transformedData = data.map((event) => ({
+          title: event.title,
+          start: event.start_date,
+          end: event.end_date,
+          extendedProps: {
+            description: `${event.last_name} ${event.description}`,
+          },
+        }));
+        setEvents(transformedData);
+      } catch (error) {
+        console.error("イベントデータの取得に失敗しました", error);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   const handleEventClick = (arg: EventClickArg): void => {
     setSelectedEvent({
       title: arg.event.title,
@@ -198,6 +113,13 @@ const Calendar: FC = () => {
       description: arg.event.extendedProps.description || "",
     });
     setIsModalOpen(true);
+    setIsDateModalOpen(false);
+  };
+
+  const handleDateClick = (arg: { date: Date; allDay: boolean }) => {
+    setSelectedDate(arg.date);
+    setIsDateModalOpen(true);
+    setIsModalOpen(false);
   };
 
   return (
@@ -231,6 +153,7 @@ const Calendar: FC = () => {
             contentHeight="auto"
             stickyHeaderDates={true}
             eventClick={handleEventClick}
+            dateClick={handleDateClick}
           />
         </div>
         {isModalOpen && (
@@ -241,7 +164,7 @@ const Calendar: FC = () => {
                 <ModalHeader>予約詳細</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                  <p>タイトル: {selectedEvent?.title}</p>
+                  <p>{selectedEvent?.title}</p>
                   {selectedEvent?.start && (
                     <p>
                       開始時間: {formatToJapaneseDateTime(selectedEvent.start)}
@@ -253,7 +176,7 @@ const Calendar: FC = () => {
                     </p>
                   )}
                   <p>
-                    氏名: {selectedEvent?.description}
+                    氏名: {selectedEvent?.description}様
                     <br />
                     利用時間:{" "}
                     {calculateDuration(
@@ -278,6 +201,11 @@ const Calendar: FC = () => {
           </Center>
         )}
       </div>
+      <Reservation
+        date={selectedDate}
+        isOpen={isDateModalOpen}
+        onClose={() => setIsDateModalOpen(false)}
+      />
     </>
   );
 };

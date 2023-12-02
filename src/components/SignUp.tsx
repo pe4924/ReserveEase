@@ -5,6 +5,7 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
+  Flex,
   InputGroup,
   InputLeftElement,
   Modal,
@@ -21,7 +22,7 @@ import {
   Spinner,
   useDisclosure,
 } from "@chakra-ui/react";
-import { MdMail } from "react-icons/md";
+import { MdMail, MdPerson, MdPhone } from "react-icons/md";
 import { FaLock } from "react-icons/fa";
 
 type SignUpProps = {
@@ -30,6 +31,9 @@ type SignUpProps = {
 };
 
 const SignUp: React.FC<SignUpProps> = ({ isOpen, onClose }) => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -59,11 +63,39 @@ const SignUp: React.FC<SignUpProps> = ({ isOpen, onClose }) => {
     setIsLoading(false);
 
     if (!error && data) {
-      onCompleteModalOpen();
-      onClose();
+      try {
+        const response = await fetch(
+          "http://localhost:8000/register-user-info",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              supabase_id: data.user?.id,
+              first_name: firstName,
+              last_name: lastName,
+              email: email,
+              phone_number: phoneNumber,
+            }),
+          }
+        );
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+          onCompleteModalOpen();
+          onClose();
+        } else {
+          throw new Error(responseData.message);
+        }
+      } catch (apiError) {
+        setSignUpError(true);
+      }
     } else {
       setSignUpError(true);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -83,7 +115,51 @@ const SignUp: React.FC<SignUpProps> = ({ isOpen, onClose }) => {
                 </AlertDescription>
               </Alert>
             )}
-            <FormControl>
+            <Flex>
+              <FormControl mr={2}>
+                <InputGroup>
+                  <InputLeftElement
+                    pointerEvents="none"
+                    children={<MdPerson color="gray.300" />}
+                  />
+                  <Input
+                    placeholder="姓"
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </InputGroup>
+              </FormControl>
+              <FormControl>
+                <InputGroup>
+                  <InputLeftElement
+                    pointerEvents="none"
+                    children={<MdPerson color="gray.300" />}
+                  />
+                  <Input
+                    placeholder="名"
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                </InputGroup>
+              </FormControl>
+            </Flex>
+            <FormControl mt={4}>
+              <InputGroup>
+                <InputLeftElement
+                  pointerEvents="none"
+                  children={<MdPhone color="gray.300" />}
+                />
+                <Input
+                  placeholder="電話番号"
+                  type="text"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                />
+              </InputGroup>
+            </FormControl>
+            <FormControl mt={4}>
               <InputGroup>
                 <InputLeftElement
                   pointerEvents="none"
